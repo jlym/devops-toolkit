@@ -2,17 +2,21 @@ provider "aws" {
   region = "us-west-2"
 }
 
-module "instance_1" {
-  source        = "./docker-instance"
-  instance_name = "Devops Toolkit 1"
-}
+resource "aws_instance" "docker_instance" {
+  ami                         = "ami-8e8796f7"
+  instance_type               = "t2.medium"
+  associate_public_ip_address = true
+  key_name                    = "macbook pro 13"
 
-module "instance_2" {
-  source        = "./docker-instance"
-  instance_name = "Devops Toolkit 2"
-}
+  count = 3
+  security_groups = [
+    "docker",
+  ]
 
-module "instance_3" {
-  source        = "./docker-instance"
-  instance_name = "Devops Toolkit 3"
+  tags {
+    Name = "Devops Toolkit ${count.index}"
+  }
 }
+ output "test" {
+   value = "${aws_instance.docker_instance.public_dns}"
+ }
